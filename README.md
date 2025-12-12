@@ -233,4 +233,9 @@ Program powinien:
 
 ---
 
+sorting complexity
+<img width="1000" height="704" alt="big-o-cheat-sheet-poster" src="https://github.com/user-attachments/assets/ee61ea35-6a6a-4d41-8ffb-0c4e080677d2" />
+
+
+
 
