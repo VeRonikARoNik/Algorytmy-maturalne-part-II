@@ -216,3 +216,21 @@ namespace AlgorithmsTextCrypto
 ⚠️ **Uwaga:**  
 Zmiana nazw kontrolek w `Designer.cs` lub w edytorze wizualnym spowoduje błędy kompilacji,  
 jeśli nie zostaną one zsynchronizowane z kodem w pliku `Form1.cs`.
+
+## 📝 Zadanie samodzielne  
+### Zamiana liczby dwójkowej na dziesiętną (BIN → DEC)
+
+**Treść zadania:**
+
+Napisz program, który zamienia liczbę zapisaną w systemie dwójkowym (BIN)
+na liczbę zapisaną w systemie dziesiętnym (DEC).
+
+Program powinien:
+1. Pobierać od użytkownika liczbę binarną składającą się wyłącznie z cyfr `0` i `1`.
+2. Sprawdzać poprawność danych wejściowych.
+3. Obliczać wartość liczby dziesiętnej **bez użycia gotowych funkcji konwersji**.
+4. Wyświetlać wynik w systemie dziesiętnym.
+
+---
+
+
