@@ -1,4 +1,4 @@
-# Algorytmy-maturalne-part-II
+# Algorytmy-maturalne-part-II  
 # Algorytmy na tekstach oraz kompresji i szyfrowania  
 **Windows Forms (.NET, C#)**
 
@@ -37,32 +37,18 @@ Algorytm sprawdza, czy dwa ciągi znaków składają się z tych samych liter z 
 ### 1.3 Porządkowanie alfabetyczne (leksykograficzne)
 Sortowanie listy słów zgodnie z porządkiem słownikowym.
 
-**Implementacja:**  
-- wbudowana metoda `Array.Sort()`  
-- porównywanie leksykograficzne
-
 ---
 
 ### 1.4 Wyszukiwanie wzorca w tekście
 Algorytm wyszukuje wszystkie wystąpienia wzorca w tekście.
 
-**Zastosowany algorytm:**  
-- naiwny (porównywanie znak po znaku)
-
 **Złożoność:**  
 - czasowa: `O(n·m)`  
-- gdzie `n` – długość tekstu, `m` – długość wzorca
 
 ---
 
 ### 1.5 Odwrotna notacja polska (ONP / RPN)
 Algorytm oblicza wartość wyrażenia zapisanego w odwrotnej notacji polskiej.
-
-**Metoda:**  
-- wykorzystanie struktury danych **stos**
-
-**Obsługiwane operatory:**  
-`+  -  *  /`
 
 ---
 
@@ -72,43 +58,21 @@ Algorytm oblicza wartość wyrażenia zapisanego w odwrotnej notacji polskiej.
 - alfabet Morse’a  
 - kod Huffmana  
 
-**Huffman – idea działania:**
-1. zliczenie częstości znaków,
-2. budowa drzewa binarnego (kolejka priorytetowa),
-3. generowanie kodów binarnych na podstawie drzewa.
-
 ---
 
 ### 2.2 Szyfr Cezara
 Szyfr podstawieniowy polegający na przesunięciu liter alfabetu o stałą wartość `k`.
 
-**Cechy:**
-- prosty do implementacji,
-- niski poziom bezpieczeństwa,
-- przykład historycznego szyfrowania.
-
 ---
 
 ### 2.3 Szyfr przestawieniowy
-Szyfr oparty na zmianie kolejności znaków (np. szyfr kolumnowy z kluczem).
-
-**Cechy:**
-- brak zmiany znaków,
-- zmieniana jest jedynie ich pozycja w tekście.
+Szyfr oparty na zmianie kolejności znaków.
 
 ---
 
 ### 2.4 RSA i podpis elektroniczny
-Algorytm kryptografii asymetrycznej wykorzystywany m.in. do:
-- szyfrowania,
-- podpisu elektronicznego,
-- weryfikacji autentyczności danych.
-
-**Implementacja w .NET:**
-- `RSA`
-- `SHA256`
-- `SignData()`
-- `VerifyData()`
+Algorytm kryptografii asymetrycznej wykorzystywany do podpisu elektronicznego
+i weryfikacji autentyczności danych.
 
 ---
 
@@ -117,48 +81,13 @@ Algorytm kryptografii asymetrycznej wykorzystywany m.in. do:
 - **Język:** C#  
 - **Framework:** .NET  
 - **Interfejs:** Windows Forms  
-- **Biblioteki kryptograficzne:**  
-  `System.Security.Cryptography`
+- **Biblioteki:** `System.Security.Cryptography`
 
 ---
 
-## 4. Elementy interfejsu Windows Forms
+## 4. Kod aplikacji (Form1.cs)
 
-W projekcie wykorzystywane są m.in.:
-
-- `Form`
-- `Label`
-- `TextBox`
-- `RichTextBox`
-- `Button`
-- `ComboBox`
-- `ListBox`
-- `NumericUpDown`
-- `MessageBox`
-- `OpenFileDialog`
-- `SaveFileDialog`
-
----
-
-## 5. Struktura aplikacji
-
-Aplikacja składa się z:
-- pól wejściowych dla danych tekstowych,
-- przycisków uruchamiających poszczególne algorytmy,
-- pola wynikowego prezentującego rezultat działania algorytmu.
-
----
-
-## 6. Cel projektu
-
-Celem projektu jest:
-- praktyczne poznanie klasycznych algorytmów,
-- zrozumienie podstaw przetwarzania tekstu i kryptografii,
-- nauka implementacji algorytmów w aplikacji okienkowej .NET.
-
----
-
-
+```csharp
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -175,11 +104,6 @@ namespace AlgorithmsTextCrypto
             InitializeComponent();
         }
 
-        // =========================================================
-        // 1. ALGORYTMY NA TEKSTACH
-        // =========================================================
-
-        // Palindrom
         private bool IsPalindrome(string s)
         {
             int i = 0, j = s.Length - 1;
@@ -191,20 +115,16 @@ namespace AlgorithmsTextCrypto
             return true;
         }
 
-        // Anagram
         private bool IsAnagram(string a, string b)
         {
             if (a.Length != b.Length) return false;
-
             int[] count = new int[256];
             foreach (char c in a) count[(byte)c]++;
             foreach (char c in b)
                 if (--count[(byte)c] < 0) return false;
-
             return true;
         }
 
-        // Sortowanie leksykograficzne
         private string SortLexicographically(string text)
         {
             var words = text.Split(
@@ -215,39 +135,29 @@ namespace AlgorithmsTextCrypto
             return string.Join(Environment.NewLine, words);
         }
 
-        // Wyszukiwanie wzorca w tekście (naiwne)
         private List<int> FindPattern(string text, string pattern)
         {
             var positions = new List<int>();
-
             for (int i = 0; i + pattern.Length <= text.Length; i++)
             {
                 int j = 0;
-                while (j < pattern.Length && text[i + j] == pattern[j])
-                    j++;
-
-                if (j == pattern.Length)
-                    positions.Add(i);
+                while (j < pattern.Length && text[i + j] == pattern[j]) j++;
+                if (j == pattern.Length) positions.Add(i);
             }
             return positions;
         }
 
-        // Odwrotna notacja polska (ONP)
         private double EvaluateRPN(string expression)
         {
             var stack = new Stack<double>();
-
             foreach (var token in expression.Split(' '))
             {
                 if (double.TryParse(token, out double number))
-                {
                     stack.Push(number);
-                }
                 else
                 {
                     double b = stack.Pop();
                     double a = stack.Pop();
-
                     stack.Push(token switch
                     {
                         "+" => a + b,
@@ -261,15 +171,9 @@ namespace AlgorithmsTextCrypto
             return stack.Pop();
         }
 
-        // =========================================================
-        // 2. SZYFROWANIE
-        // =========================================================
-
-        // Szyfr Cezara
         private string CaesarCipher(string text, int key)
         {
             key = ((key % 26) + 26) % 26;
-
             return new string(text.Select(c =>
             {
                 if (char.IsLower(c))
@@ -280,98 +184,11 @@ namespace AlgorithmsTextCrypto
             }).ToArray());
         }
 
-        // =========================================================
-        // 3. RSA – PODPIS ELEKTRONICZNY
-        // =========================================================
-
         private RSA rsa = RSA.Create();
-
-        private byte[] SignMessage(string message)
-        {
-            byte[] data = Encoding.UTF8.GetBytes(message);
-            return rsa.SignData(
-                data,
-                HashAlgorithmName.SHA256,
-                RSASignaturePadding.Pkcs1);
-        }
-
-        private bool VerifyMessage(string message, byte[] signature)
-        {
-            byte[] data = Encoding.UTF8.GetBytes(message);
-            return rsa.VerifyData(
-                data,
-                signature,
-                HashAlgorithmName.SHA256,
-                RSASignaturePadding.Pkcs1);
-        }
-
         private byte[] signature;
-
-        // =========================================================
-        // 4. OBSŁUGA PRZYCISKÓW (EVENTY)
-        // =========================================================
-
-        private void buttonPalindrome_Click(object sender, EventArgs e)
-        {
-            textBoxOutput.Text = IsPalindrome(textBoxInput.Text)
-                ? "TAK – palindrom"
-                : "NIE – nie palindrom";
-        }
-
-        private void buttonAnagram_Click(object sender, EventArgs e)
-        {
-            textBoxOutput.Text = IsAnagram(textBoxInput.Text, textBoxInput2.Text)
-                ? "TAK – anagram"
-                : "NIE – nie anagram";
-        }
-
-        private void buttonSort_Click(object sender, EventArgs e)
-        {
-            textBoxOutput.Text = SortLexicographically(textBoxInput.Text);
-        }
-
-        private void buttonFind_Click(object sender, EventArgs e)
-        {
-            var positions = FindPattern(textBoxInput.Text, textBoxPattern.Text);
-            textBoxOutput.Text = positions.Count > 0
-                ? "Znaleziono na pozycjach: " + string.Join(", ", positions)
-                : "Brak wystąpień";
-        }
-
-        private void buttonRpn_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                double result = EvaluateRPN(textBoxInput.Text);
-                textBoxOutput.Text = result.ToString();
-            }
-            catch
-            {
-                textBoxOutput.Text = "Błąd wyrażenia ONP";
-            }
-        }
-
-        private void buttonCaesar_Click(object sender, EventArgs e)
-        {
-            int key = (int)numericUpDownKey.Value;
-            textBoxOutput.Text = CaesarCipher(textBoxInput.Text, key);
-        }
-
-        private void buttonSign_Click(object sender, EventArgs e)
-        {
-            signature = SignMessage(textBoxInput.Text);
-            textBoxOutput.Text = Convert.ToBase64String(signature);
-        }
-
-        private void buttonVerify_Click(object sender, EventArgs e)
-        {
-            bool valid = VerifyMessage(textBoxInput.Text, signature);
-            textBoxOutput.Text = valid
-                ? "Podpis poprawny"
-                : "Podpis niepoprawny";
-        }
     }
 }
+```
 
 ### 📥 Pola tekstowe
 
