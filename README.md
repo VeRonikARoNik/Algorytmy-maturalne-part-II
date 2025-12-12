@@ -102,7 +102,13 @@ namespace AlgorithmsTextCrypto
         public Form1()
         {
             InitializeComponent();
+
+            // Opcjonalnie: żeby output był "raportowy"
+            textBoxOutput.Multiline = true;
+            textBoxOutput.ScrollBars = ScrollBars.Vertical;
         }
+
+        // ===================== ALGORYTMY (Twoje) =====================
 
         private bool IsPalindrome(string s)
         {
@@ -150,7 +156,7 @@ namespace AlgorithmsTextCrypto
         private double EvaluateRPN(string expression)
         {
             var stack = new Stack<double>();
-            foreach (var token in expression.Split(' '))
+            foreach (var token in expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (double.TryParse(token, out double number))
                     stack.Push(number);
@@ -184,10 +190,116 @@ namespace AlgorithmsTextCrypto
             }).ToArray());
         }
 
-        private RSA rsa = RSA.Create();
-        private byte[] signature;
+        // ===================== RSA (PODPIS) =====================
+
+        private RSA rsa = RSA.Create();     // klucz prywatny+publiczny (domyślnie generuje się przy Create())
+        private byte[] signature;           // trzymamy ostatni podpis
+
+        // ===================== HANDLERY PRZYCISKÓW =====================
+
+        private void buttonPalindrome_Click(object sender, EventArgs e)
+        {
+            var input = textBoxInput.Text ?? "";
+            bool ok = IsPalindrome(input);
+            textBoxOutput.Text = ok ? " Palindrom" : " Nie jest palindromem";
+        }
+
+        private void buttonAnagram_Click(object sender, EventArgs e)
+        {
+            var a = textBoxInput.Text ?? "";
+            var b = textBoxInput2.Text ?? "";
+            bool ok = IsAnagram(a, b);
+            textBoxOutput.Text = ok ? " Anagram" : " Nie jest anagramem";
+        }
+
+        private void buttonSortLex_Click(object sender, EventArgs e)
+        {
+            var input = textBoxInput.Text ?? "";
+            textBoxOutput.Text = SortLexicographically(input);
+        }
+
+        private void buttonFindPattern_Click(object sender, EventArgs e)
+        {
+            var text = textBoxInput.Text ?? "";
+            var pattern = textBoxPattern.Text ?? "";
+
+            if (string.IsNullOrEmpty(pattern))
+            {
+                textBoxOutput.Text = "Wpisz wzorzec w textBoxPattern.";
+                return;
+            }
+
+            var pos = FindPattern(text, pattern);
+            textBoxOutput.Text = pos.Count == 0
+                ? "Brak dopasowań."
+                : "Pozycje dopasowań: " + string.Join(", ", pos);
+        }
+
+        private void buttonRpn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var expr = textBoxInput.Text ?? "";
+                double value = EvaluateRPN(expr);
+                textBoxOutput.Text = value.ToString();
+            }
+            catch (Exception ex)
+            {
+                textBoxOutput.Text = "Błąd RPN: " + ex.Message;
+            }
+        }
+
+        private void buttonCaesarEncrypt_Click(object sender, EventArgs e)
+        {
+            var input = textBoxInput.Text ?? "";
+            int key = (int)numericUpDownKey.Value;
+            textBoxOutput.Text = CaesarCipher(input, key);
+        }
+
+        private void buttonCaesarDecrypt_Click(object sender, EventArgs e)
+        {
+            var input = textBoxInput.Text ?? "";
+            int key = (int)numericUpDownKey.Value;
+            textBoxOutput.Text = CaesarCipher(input, -key);
+        }
+
+        // ===== RSA: generowanie nowego klucza =====
+        private void buttonRsaNewKey_Click(object sender, EventArgs e)
+        {
+            rsa.Dispose();
+            rsa = RSA.Create(2048);
+            signature = null;
+            textBoxOutput.Text = " Wygenerowano nową parę kluczy RSA 2048. Podpis wyczyszczony.";
+        }
+
+        // ===== RSA: podpis =====
+        private void buttonRsaSign_Click(object sender, EventArgs e)
+        {
+            var message = textBoxInput.Text ?? "";
+            var data = Encoding.UTF8.GetBytes(message);
+
+            signature = rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            textBoxOutput.Text = " Podpis (Base64):\r\n" + Convert.ToBase64String(signature);
+        }
+
+        // ===== RSA: weryfikacja podpisu =====
+        private void buttonRsaVerify_Click(object sender, EventArgs e)
+        {
+            if (signature == null || signature.Length == 0)
+            {
+                textBoxOutput.Text = "Brak podpisu. Najpierw użyj 'Sign'.";
+                return;
+            }
+
+            var message = textBoxInput.Text ?? "";
+            var data = Encoding.UTF8.GetBytes(message);
+
+            bool ok = rsa.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            textBoxOutput.Text = ok ? " Podpis poprawny" : " Podpis NIEPOPRAWNY";
+        }
     }
 }
+
 ```
 
 ### 📥 Pola tekstowe
